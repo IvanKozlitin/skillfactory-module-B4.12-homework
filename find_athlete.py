@@ -1,4 +1,4 @@
-# испортируем модуль стандартнй библиотеки и datetime
+# испортируем модуль стандартной библиотеки datetime
 import datetime
 
 # импортируем библиотеку sqlalchemy и некоторые функции из нее 
@@ -6,33 +6,13 @@ import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+# импортирую класс User из модуля users.py
+from users import User
+
 # константа, указывающая способ соединения с базой данных
 DB_PATH = "sqlite:///sochi_athletes.sqlite3"
 # базовый класс моделей таблиц
 Base = declarative_base()
-
-
-class User(Base):
-    """
-    Описывает структуру таблицы user для хранения регистрационных данных пользователей
-    """
-    # задаем название таблицы
-    __tablename__ = 'user'
-
-    # идентификатор пользователя, первичный ключ
-    id = sa.Column(sa.Integer, primary_key=True)
-    # имя пользователя
-    first_name = sa.Column(sa.Text)
-    # фамилия пользователя
-    last_name = sa.Column(sa.Text)
-    # пол
-    gender = sa.Column(sa.Text)
-    # адрес электронной почты пользователя
-    email = sa.Column(sa.Text)
-    # дата рождения
-    birthdate = sa.Column(sa.Text)
-    # рост
-    height = sa.Column(sa.Float)
 
 class Athelete(Base):
     """
@@ -81,32 +61,7 @@ def connect_db():
     # возвращаем сессию
     return session()
 
-def request_data():
-    """
-    Запрашивает у пользователя данные и добавляет их в список users
-    """
-    # выводим приветствие
-    print("Привет! Я запишу твои данные!")
-    # запрашиваем у пользователя данные
-    first_name = input("Введи своё имя: ")
-    last_name = input("А теперь фамилию: ")
-    gender = input("Свой пол (Male / Female): ")
-    email = input("Мне еще понадобится адрес твоей электронной почты: ")
-    birthdate = input("А также дата твоего рождения (В таком формате 1990-05-21): ")
-    height = input("И в заключение, твой рост (В таком формате 1.82): ")
-    # создаем нового пользователя
-    user = User(
-        first_name=first_name,
-        last_name=last_name,
-        gender=gender,
-        email=email,
-        birthdate=birthdate,
-        height=height
-    )
-    # возвращаем созданного пользователя
-    return user
-
-def find(id_user, session): #!!!!! Переделать + вывести в отдельный модуль + users.py тоже вывести в отдельный модуль
+def find(id_user, session):
     """
     Производит поиск пользователя в таблице user по заданному id и находит ближайших атлетов по воросту и росту
     """
@@ -162,33 +117,17 @@ def print_users_list(athelete_birthdate, athelete_height, data_user):
         # если список оказался пустым, выводим сообщение об этом
         print("Пользователя с таким id нет.")
 
-
 def main():
     """
     Осуществляет взаимодействие с пользователем, обрабатывает пользовательский ввод
     """
     session = connect_db()
-    # просим пользователя выбрать режим
-    mode = input("Выбери режим.\n1 - найти пользователя по id и ближайших к нему спортсменов по дате рождения и росту\n2 - ввести данные нового пользователя\n")
-    # проверяем режим
-    if mode == "1":
-        # выбран режим поиска, запускаем его
-        id_user = input("Введи id пользователя для поиска: ")
-        # вызываем функцию поиска по id
-        athelete_birthdate, athelete_height, data_user = find(id_user, session)
-        # вызываем функцию печати на экран результатов поиска
-        print_users_list(athelete_birthdate, athelete_height, data_user)
-    elif mode == "2":
-        # запрашиваем данные пользоватлея
-        user = request_data()
-        # добавляем нового пользователя в сессию
-        session.add(user)
-        # сохраняем все изменения, накопленные в сессии
-        session.commit()
-        print("Спасибо, данные сохранены!")
-    else:
-        print("Некорректный режим:(")
-
+    # выбран режим поиска, запускаем его
+    id_user = input("Введи id пользователя для поиска: ")
+    # вызываем функцию поиска по id
+    athelete_birthdate, athelete_height, data_user = find(id_user, session)
+    # вызываем функцию печати на экран результатов поиска
+    print_users_list(athelete_birthdate, athelete_height, data_user)
 
 if __name__ == "__main__":
     main()
