@@ -7,4 +7,4 @@
 
 P.S. В данной базе данных есть только один пользователь и он имеет id = 1, слудующий добавленный пользователь будет иметь id = 2 и так далее.
 
-**Ссылка для скачивания программы: https://github.com/KI-Shadow/skillfactory-module-B4.12-homework/archive/main.zip**
+**Ссылка для скачивания программы: https://github.com/IvanKozlitin/skillfactory-module-B4.12-homework/archive/main.zip**
